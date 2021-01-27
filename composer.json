@@ -1,0 +1,27 @@
+{
+    "name": "ie/sql_converter_migration",
+    "description": "convert sql to migration",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Islam9595",
+            "email": "iemam@qurtobasolutions.com"
+        }
+    ],
+    "require": {},
+
+    "autoload": {
+        "psr-4": {
+            "ie\\sqlconvertertomigration\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ie\\sqlconvertertomigration\\SqlConverterToMigrationServiceProvider"
+            ]
+        }
+    },
+}
+
