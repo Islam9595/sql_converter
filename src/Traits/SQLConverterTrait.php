@@ -251,14 +251,14 @@ trait SQLConverterTrait
         touch($file, strtotime('-1 days'));
         if ($data['operation'] == 'create') {
             $operation = 'create';
-            File::copy($root_path . '/app/Templates/TemplateFile.php', $file);
+            File::copy(__DIR__ . '/Templates/TemplateFile.php', $file);
         }
         if ($data['operation'] == 'alter') {
             $operation = 'table';
-            File::copy($root_path . '/app/Templates/AlterFile.php', $file);
+            File::copy(__DIR__.'/Templates/AlterFile.php', $file);
         }
         if ($data['operation'] == 'drop') {
-            File::copy($root_path . '/app/Templates/DropFile.php', $file);
+            File::copy(__DIR__ . '/Templates/DropFile.php', $file);
             self::ReplaceWordInFile($file, 'table_name', $data['table']);
         }
         if ($data['operation'] != 'drop') {

@@ -3,6 +3,7 @@
 namespace Ie\SQlConverterToMigration;
 
 use Illuminate\Support\ServiceProvider;
+use JohnDoe\BlogPackage\Console\InstallSQLConverterPackage;
 
 class SqlConverterToMigrationServiceProvider extends ServiceProvider
 {
@@ -14,6 +15,11 @@ class SqlConverterToMigrationServiceProvider extends ServiceProvider
     public function register()
     {
         //
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                InstallSQLConverterPackage::class,
+            ]);
+        }
     }
 
     /**
