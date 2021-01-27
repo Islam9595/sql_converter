@@ -1,6 +1,6 @@
 <?php
 
-namespace Ie\Sqlconvertertomigration\Traits;
+namespace ie\sqlconvertertomigration\Traits;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;

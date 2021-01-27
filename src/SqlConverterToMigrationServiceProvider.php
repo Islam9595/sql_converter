@@ -1,8 +1,8 @@
 <?php
 
-namespace Ie\SQlConverterToMigration;
+namespace ie\sqlconvertertomigration;
 
-use Ie\Sqlconvertertomigration\Console\InstallSQLConverterPackage;
+use ie\sqlconvertertomigration\Console\InstallSQLConverterPackage;
 use Illuminate\Support\ServiceProvider;
 
 class SqlConverterToMigrationServiceProvider extends ServiceProvider

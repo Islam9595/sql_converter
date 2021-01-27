@@ -1,8 +1,8 @@
 <?php
 
-namespace Ie\Sqlconvertertomigration\Models;
+namespace ie\sqlconvertertomigration\Models;
 
-use Ie\Sqlconvertertomigration\Traits\SQLConverterTrait;
+use ie\sqlconvertertomigration\Traits\SQLConverterTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class SQLConverter extends Model

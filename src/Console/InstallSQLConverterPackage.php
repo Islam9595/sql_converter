@@ -1,6 +1,6 @@
 <?php
 
-namespace Ie\Sqlconvertertomigration\Console;
+namespace ie\sqlconvertertomigration\Console;
 
 use Illuminate\Console\Command;
 
