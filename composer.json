@@ -22,6 +22,6 @@
                 "ie\\sqlconvertertomigration\\SqlConverterToMigrationServiceProvider"
             ]
         }
-    },
+    }
 }
 
