@@ -2,7 +2,7 @@
 
 namespace Ie\SQlConverterToMigration;
 
-use Ie\Sqlconvertertomigration\Console\InstallSQLConverterPackage;
+use Ie\Sqlconvertertomigration\Consoles\InstallSQLConverterPackage;
 use Illuminate\Support\ServiceProvider;
 
 class SqlConverterToMigrationServiceProvider extends ServiceProvider
