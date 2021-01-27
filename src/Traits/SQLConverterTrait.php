@@ -138,7 +138,7 @@ trait SQLConverterTrait
                     if (self::isUnique($cols_as_string, $data['table'], $col_name)) {
                         array_push($attributes, 'PRIMARY KEY');
                     }
-                    $all_attributes = array_merge($attributes, self::getAttributes($col));
+                    $all_attributes = array_merge($attributes, self::getCustomAttributes($col));
                     $inner_col['attributes'] = $all_attributes;
                     array_push($cols, $inner_col);
                 }
@@ -208,7 +208,7 @@ trait SQLConverterTrait
         return false;
     }
 
-    static function getAttributes($string): array
+    static function getCustomAttributes($string): array
     {
         $options = [];
         $meta_data=['DEFAULT NULL','AUTO_INCREMENT','unsigned'];
@@ -251,14 +251,17 @@ trait SQLConverterTrait
         touch($file, strtotime('-1 days'));
         if ($data['operation'] == 'create') {
             $operation = 'create';
-            File::copy(__DIR__ . '/Templates/TemplateFile.php', $file);
+            $dir=str_replace('/Traits','',__DIR__);
+            File::copy($dir . '/Templates/TemplateFile.php', $file);
         }
         if ($data['operation'] == 'alter') {
             $operation = 'table';
-            File::copy(__DIR__.'/Templates/AlterFile.php', $file);
+            $dir=str_replace('/Traits','',__DIR__);
+            File::copy($dir.'/Templates/AlterFile.php', $file);
         }
         if ($data['operation'] == 'drop') {
-            File::copy(__DIR__ . '/Templates/DropFile.php', $file);
+            $dir=str_replace('/Traits','',__DIR__);
+            File::copy($dir . '/Templates/DropFile.php', $file);
             self::ReplaceWordInFile($file, 'table_name', $data['table']);
         }
         if ($data['operation'] != 'drop') {
@@ -503,7 +506,7 @@ trait SQLConverterTrait
             if (self::isPrimaryKey($mysql_filter, $data['column'])) {
                 array_push($attributes, 'PRIMARY KEY');
             }
-            $all_attributes = array_merge($attributes, self::getAttributes($mysql_filter));
+            $all_attributes = array_merge($attributes, self::getCustomAttributes($mysql_filter));
             $data['attributes'] = $all_attributes;
             $data = (object)$data;
             $method_type = self::typeConverter($data->type);
