@@ -85,7 +85,15 @@ trait SQLConverterTrait
                 $data = [];
                 $data['table'] = $table_name;
                 $data['operation'] = 'alter';
+                $count_of_queries=count($tableWithQuery);
+                if ($count_of_queries==1){
+                    preg_match_all('`"([^"]*)"`', reset($tableWithQuery), $results);
+                    $col_name=trim($results[0][1],'"');
+                    $file = self::createFileForMigration($data, $index++,$col_name);
+                }
+                else{
                     $file = self::createFileForMigration($data, $index++);
+                }
                     self::extractDataOfQuery($filtered_results_according_table[$table_name], $file);
                     break;
                 }
@@ -232,13 +240,18 @@ trait SQLConverterTrait
         return $options;
     }
 
-    public static function createFileForMigration(array $data, $index): string
+    public static function createFileForMigration(array $data, $index,$col_name=null): string
     {
         if ($data['operation'] == 'create') {
             $main_name = '_create_' . $data['table'] . '_table';
         }
         if ($data['operation'] == 'alter') {
-            $main_name = '_edit_columns_to_' . $data['table'] . '_table';
+            if ($col_name!=null){
+                $main_name = '_add_'.$col_name.'_to_' . $data['table'] . '_table';
+            }
+            else{
+                $main_name = '_edit_columns_to_' . $data['table'] . '_table';
+            }
         }
         if ($data['operation'] == 'drop') {
             $main_name = '_drop_' . $data['table'] . '_table';
