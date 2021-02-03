@@ -647,12 +647,12 @@ trait SQLConverterTrait
 
     static function checkIfAlterOrDropAlter($mysql){
         if (strpos($mysql, 'ALTER TABLE') !== false) {
-            $operation = 'alter_only';
+            return  'alter_only';
         }
         if (strpos($mysql, 'ALTER TABLE') !== false &&strpos($mysql, 'DROP') !== false ) {
-            $operation = 'alter_drop';
+            return  'alter_drop';
         }
-        return $operation;
+        return null;
     }
 
     static function extractDataOfQuery($queries_as_array, $file)
@@ -673,9 +673,11 @@ trait SQLConverterTrait
             preg_match_all('/"([^"]+)"/', $mysql_filter, $m);
             $meta_data = $m[0];
             $table = $meta_data[0];
-            $column = $meta_data[1];
-            $result = preg_split('/' . $column . '/', $mysql_filter);
-            $result_split = explode(' ', $result[1]);
+            if (array_key_exists(1, $meta_data)) {
+                $column = $meta_data[1];
+                $result = preg_split('/' . $column . '/', $mysql_filter);
+                $result_split = explode(' ', $result[1]);
+            }
             $checkIfAlterOrDropAlter=  self::checkIfAlterOrDropAlter($mysql);
             if ($checkIfAlterOrDropAlter=='alter_drop'){
                 $exception_operator=true;
@@ -714,7 +716,7 @@ trait SQLConverterTrait
                 self::fileEditContents($file, $line_to_add - 1, $col_migration);
                 continue;
             }
-            if (count($result_split)>1){
+            if (isset($result_split)&&count($result_split)>1){
                 $type = $result_split[1];
             }
             if (isset($type)&&$type==""){
@@ -729,13 +731,17 @@ trait SQLConverterTrait
                 $data['type']=$type;
             }
             $data['table'] = trim($table, '"');
-            $data['column'] = trim($column, '"');
+            if (isset($column)){
+                $data['column'] = trim($column, '"');
+            }
             $attributes = [];
-            $PrimaryKeys=self::isPrimaryKey($mysql_filter, $data['column']);
-            if (count($PrimaryKeys)==1 && $original__with_semi==reset($PrimaryKeys)){
+            if (isset($column)) {
+                $PrimaryKeys = self::isPrimaryKey($mysql_filter, $data['column']);
+            }
+            if (isset($PrimaryKeys)&&count($PrimaryKeys)==1 && $original__with_semi==reset($PrimaryKeys)){
                 array_push($attributes, 'PRIMARY KEY');
             }
-            else if (count($PrimaryKeys)>1 ){
+            else if (isset($PrimaryKeys)&&count($PrimaryKeys)>1 ){
                 $MULTI_PKS=$PrimaryKeys;
                 array_push($attributes, 'MULTI PKS');
             }
@@ -746,11 +752,13 @@ trait SQLConverterTrait
                 $method_type = self::typeConverter($data->type);
             }
             $attributes = $data->attributes;
-            $attributes_assigned = self::attributeConverter($attributes, $data->table, $data->column, $data->operation);
-            if (Schema::hasColumn($data->table, $data->column)) {
+            if (isset($data->column)){
+                $attributes_assigned = self::attributeConverter($attributes, $data->table, $data->column, $data->operation);
+            }
+            if (isset($data->column)&&Schema::hasColumn($data->table, $data->column)) {
                 $attributes_assigned .= '->change()';
             }
-            if ($attributes_assigned != '') {
+            if (isset($attributes_assigned)&&$attributes_assigned != '') {
                 $end = $attributes_assigned;
             } else {
                 $end = ';';
@@ -765,7 +773,7 @@ trait SQLConverterTrait
                 }
             }
             //que
-            if (Schema::hasColumn($data->table, $data->column)) {
+            if (isset($data->column)&&Schema::hasColumn($data->table, $data->column)) {
                 $result = self::getTableInformationBeforeDrop($data->table);
                 foreach ($result['columns'] as $one_col) {
                     $one_col = (object)$one_col;
@@ -792,7 +800,7 @@ trait SQLConverterTrait
                         self::fileEditContents($file, $line_to_drop - 1, $reverse_migration);
                     }
                 }
-            } else if (!Schema::hasColumn($data->table, $data->column)) {
+            } else if (isset($data->column)&&!Schema::hasColumn($data->table, $data->column)) {
                 $line_to_drop = self::getEditableLine($file, '//end_reverse');
                 $full_name_col = "'" . $data->column . "'";
                 $full_table_name = "'" . $data->table . "'";
